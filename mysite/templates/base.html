@@ -3,6 +3,10 @@
 <body class="{% block body_class %}{% endblock %}">
     {% wagtailuserbar %}
 
+    {# Add your header template to your base template: #}
+    {% include "includes/header.html" %}
+
+
     {% block content %}{% endblock %}
 
     {# Add this to the file: #}
