@@ -15,6 +15,8 @@
             <a href="{% pageurl menuitem %}">{{ menuitem.title }}</a>{% if not forloop.last %} | {% endif %}
 
           {% endfor %}
+          {# Display your search by adding this: #}
+          | <a href="/search/">Search</a>
         </p>
     </nav>
 

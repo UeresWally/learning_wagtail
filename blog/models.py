@@ -7,8 +7,9 @@ from taggit.models import TaggedItemBase
 
 from wagtail.models import Page, Orderable
 from wagtail.fields import RichTextField
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel
 from wagtail.snippets.models import register_snippet
+from wagtail.search import index
 
 
 class BlogIndexPage(Page):
@@ -51,15 +52,22 @@ class BlogPage(Page):
 
     authors = ParentalManyToManyField('blog.Author', blank=True)
     tags = ClusterTaggableManager(through=BlogPageTag, blank=True)
-    
+
+    search_fields = Page.search_fields + [
+        index.SearchField('intro'),
+        index.SearchField('body'),
+    ]
+
     content_panels = Page.content_panels + [
         MultiFieldPanel([
-            'date',
+            FieldPanel('date'),
             FieldPanel('authors', widget=forms.CheckboxSelectMultiple),
-            'tags',
-            ], heading='Blog information'),
-        'intro', 'body', 'gallery_images'
-        ]
+            FieldPanel('tags'),
+        ], heading='Blog information'),
+        FieldPanel('intro'),
+        FieldPanel('body'),
+        InlinePanel('gallery_images', label='Gallery images'),
+    ]
 
 
 class BlogPageGalleryImage(Orderable):
@@ -69,7 +77,10 @@ class BlogPageGalleryImage(Orderable):
     )
     caption = models.CharField(blank=True, max_length=250)
 
-    panels = ["image", "caption"]
+    panels = [
+        FieldPanel('image'),
+        FieldPanel('caption'),
+    ]
 
 
 @register_snippet
@@ -87,3 +98,6 @@ class Author(models.Model):
     
     class Meta:
         verbose_name_plural = 'Authors'
+
+
+# end of file
